@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+    
+    <resultMap type="com.spring.board.vo.BoardVo" id="boardVo">
+    	<result property="boardType" 	column="BOARD_TYPE"/>
+    	<result property="boardNum" 	column="BOARD_NUM"/>
+    	<result property="boardTitle" 	column="BOARD_TITLE"/>
+    	<result property="boardComment" column="BOARD_COMMENT"/>
+    </resultMap>
+    
+    <resultMap type="com.spring.board.vo.TypeVo" id="typeVo">
+    	<result property="codeType" 	column="CODE_TYPE"/>
+    	<result property="codeId" 		column="CODE_ID"/>
+    	<result property="codeName" 	column="CODE_NAME"/>
+    </resultMap>
+    
+    <select id="boardList" parameterType="com.spring.board.vo.PageVo" resultMap="boardVo">
+        SELECT 
+		  BOARD_TYPE
+		  ,BOARD_NUM
+		  ,BOARD_TITLE
+		  ,BOARD_COMMENT
+		  ,TOTAL_CNT
+		FROM 
+		(
+		  SELECT
+		      	BOARD_TYPE
+				,BOARD_NUM
+				,BOARD_TITLE
+				,BOARD_COMMENT
+		      	,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
+		      	,COUNT(*) OVER() AS TOTAL_CNT
+			FROM
+				BOARD	
+			<if test="arr != null">
+				WHERE BOARD_TYPE IN
+		    	<foreach collection="array" item="arr" open="(" close=")" separator=",">
+		    		#{arr}
+		    	</foreach> 
+    		</if>
+		)
+		WHERE NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
+		ORDER BY BOARD_TYPE, BOARD_NUM desc
+    </select>
+    
+    <select id="boardTotal" parameterType="Integer" resultType="Integer">
+		  SELECT
+		      	COUNT(*) AS TOTAL_CNT
+			FROM
+				BOARD	
+    </select>
+    	
+    <select id="boardView" parameterType="com.spring.board.vo.BoardVo" resultMap="boardVo">
+    	SELECT
+        	BOARD_TYPE
+			,BOARD_NUM
+			,BOARD_TITLE
+			,BOARD_COMMENT
+		FROM
+			BOARD
+    	WHERE 	BOARD_TYPE = #{boardType}
+    	AND 	BOARD_NUM  = #{boardNum}
+    </select>	
+    
+    <select id="boardInsert" parameterType="com.spring.board.vo.BoardVo">
+        INSERT INTO 
+        BOARD
+        (BOARD_TYPE
+        ,BOARD_NUM
+        ,BOARD_TITLE
+        ,BOARD_COMMENT
+        ,CREATOR
+        ,CREATE_TIME
+        ,MODIFIER
+        ,MODIFIED_TIME
+        )
+        VALUES
+        (#{boardType}
+        ,NVL((SELECT TO_NUMBER(MAX(BOARD_NUM)+1)
+	    FROM BOARD
+	    WHERE BOARD_TYPE = #{boardType}), 1)
+        ,#{boardTitle}
+        ,#{boardComment}
+        ,'SYSTEM'
+        ,TO_CHAR(SYSDATE)
+        ,'SYSTEM'
+        ,TO_CHAR(SYSDATE)
+        )
+    </select>
+    <delete id="delete" parameterType="com.spring.board.vo.BoardVo">
+    	delete 
+    	from board 
+    	where BOARD_TYPE = #{boardType} 
+    	and BOARD_NUM = #{boardNum}
+    </delete>
+    <update id="update" parameterType="com.spring.board.vo.BoardVo">
+    	update board 
+    	set BOARD_TITLE = #{boardTitle}
+    		, BOARD_COMMENT = #{boardComment} 
+    	where BOARD_TYPE = #{boardType} 
+    	and BOARD_NUM = #{boardNum}
+    </update>
+    <select id="typeList" parameterType="String" resultMap="typeVo">
+    	SELECT CODE_TYPE, CODE_ID, CODE_NAME
+    	FROM COM_CODE
+    	WHERE CODE_TYPE = #{codeType}
+    </select>
+    
+    <select id="id_chk" parameterType="String" resultType="int">
+    	select count(*) from user_info where user_id = #{id}
+    </select>
+    <insert id="userInsert" parameterType="com.spring.board.vo.UserVo">
+    	insert into user_info(USER_ID, USER_PW, USER_NAME, USER_PHONE1, USER_PHONE2, USER_PHONE3,
+    							USER_ADDR1, USER_ADDR2, USER_COMPANY)
+    	values(#{id}, #{pw}, #{name}, #{phone1}, #{phone2}, #{phone3}, #{postNo}, #{addr2}, #{company})
+    </insert>
+    <select id="login" parameterType="com.spring.board.vo.UserVo" resultType="int">
+    	select count(*) from user_info where USER_ID = #{id} and USER_PW = #{pw}
+    </select>
+</mapper>
