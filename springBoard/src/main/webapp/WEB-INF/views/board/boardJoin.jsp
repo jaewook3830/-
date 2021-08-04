@@ -14,6 +14,57 @@
 	var $j = jQuery.noConflict();
 </script>
 <script type="text/javascript">
+	// 설정된 바이트의 크기를 넘어서지 못하게 체크하는 함수
+	function inputLimitByteChecked(obj) {
+	    var calByte = {
+	        getByteLength : function( string ) {
+	            if( string == null || string.length == 0 ) {
+	                return 0;
+	            }
+	            let size = 0;
+	            for( let num = 0; num < string.length; num++ ) {
+	                size += this.charByteSize( string.charAt( num ) );
+	            }
+	            return size;
+	        }
+	        , cutByteLength : function( string, length ) {
+	            if( string == null || string.length == 0 ) {
+	                return 0;
+	            }
+	            let size = 0;
+	            let rIndex = string.length;
+	            for( let num = 0; num < string.length; num++ ) {
+	                size += this.charByteSize( string.charAt( num ) );
+	                if( size == length ) {
+	                    rIndex = num + 1;
+	                    break;
+	                } else if( size > length ) {
+	                    rIndex = num;
+	                    break;
+	                }
+	            }
+	            return string.substring( 0, rIndex );
+	        }
+	        , charByteSize : function( ch ) {
+	            if( ch == null || ch.length == 0 ) {
+	                return 0;
+	            }
+	            let charCode = ch.charCodeAt( 0 );
+	            if( charCode <= 0x00007F ) {
+	                return 1;
+	            } else if( charCode <= 0x0007FF ) {
+	                return 2;
+	            } else if( charCode <= 0x00FFFF ) {
+	                return 3;
+	            } else {
+	                return 4;
+	            }
+	        }
+	    };
+  		if( calByte.getByteLength( obj.value ) > obj.dataset.byte ) {
+        	obj.value = calByte.cutByteLength( obj.value, obj.dataset.byte );
+    	}
+	}
 	// id(영문,숫자만 가능)
 	$j(document).ready(function() {
 		$j("#id").keyup(function(event) {
@@ -34,7 +85,6 @@
 			success : function(data) {
 				if($j("#id").val() == ""){
 					alert("아이디를 입력하세요.");
-					$j("#id").val("");
 					$j("#id").focus();
 				}
 				else{
@@ -70,6 +120,12 @@
 				$j("#in").html("일치");
 			}
 		});
+		$j("#postNo").keypress(function(event) {
+			if($j("#postNo").val().length == 3){
+				var value = $j(this).val()+"-";
+				$j(this).val(value);
+			}
+		});
 	});
 
 	function send(f) {
@@ -83,10 +139,15 @@
 				return;
 			}
 		}
+		if($j("#name").val().length > 5){
+			alert("이름이너무깁니다. 5글자이하로입력하세요.");
+			$j("#name").val("");
+			$j("#name").focus();
+			return;
+		}
 		if($j("#id_button").prop('disabled')){
 			if(phonepattern.test($j("#phone2").val()) && phonepattern.test($j("#phone3").val())){
 				if($j("#postNo").val() == "" || addrpattern.test($j("#postNo").val())){
-					alert("회원가입 완료");
 					f.action = "/board/boardJoinAction.do";
 					f.submit();									
 				}
@@ -131,7 +192,7 @@
 				<tr>
 					<td align="center">id</td>
 					<td>
-						<input type="text" id="id" name="id" onkeydown="alphabet(this)"> 
+						<input type="text" id="id" name="id" maxlength="15" onkeydown="alphabet(this)"> 
 						<input type="button" id="id_button" value="중복확인" onclick="id_chk()">
 					</td>
 				</tr>
@@ -150,7 +211,7 @@
 				<tr>
 					<td align="center">name</td>
 					<td>
-						<input type="text" id="name" name="name" onkeypress="hangul()">
+						<input type="text" id="name" name="name" maxlength="5" onkeypress="hangul()">
 					</td>
 				</tr>
 				<tr>
@@ -162,27 +223,27 @@
 							</c:forEach>
 						</select>
 						-
-						<input type="tel" id="phone2" name="phone2" size="4">
+						<input type="tel" id="phone2" name="phone2" size="4" maxlength="4">
 						-
-						<input type="tel" id="phone3" name="phone3" size="4">
+						<input type="tel" id="phone3" name="phone3" size="4" maxlength="4">
 					</td>
 				</tr>
 				<tr>
 					<td align="center">postNo</td>
 					<td>
-						<input type="text" id="postNo" name="postNo">
+						<input type="text" id="postNo" name="postNo" maxlength="7">
 					</td>
 				</tr>
 				<tr>
 					<td align="center">address</td>
 					<td>
-						<input type="text" id="addr2" name="addr2">
+						<input type="text" id="addr2" name="addr2" onkeyup="inputLimitByteChecked(this);" data-byte="150">
 					</td>
 				</tr>
 				<tr>
 					<td align="center">company</td>
 					<td>
-						<input type="text" id="company" name="company">
+						<input type="text" id="company" name="company" onkeyup="inputLimitByteChecked(this);" data-byte="60">
 					</td>
 				</tr>
 			</table>

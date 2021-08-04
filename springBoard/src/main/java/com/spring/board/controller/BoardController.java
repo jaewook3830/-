@@ -59,6 +59,7 @@ public class BoardController {
 		int result = boardService.selectLogin(userVo);
 		if(result > 0) {
 			res.put("result", "1");
+	
 			request.getSession().setAttribute("login", "ok");
 		}else {
 			res.put("result", "0");
@@ -71,7 +72,6 @@ public class BoardController {
 		}
 		String callbackMsg = commonUtil.getJsonCallBackString(" ",res);
 		
-		System.out.println("callbackMsg::"+callbackMsg);
 		return callbackMsg;
 	}
 	
@@ -97,9 +97,8 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value = "/board/boardJoinAction.do", method = RequestMethod.GET)
-	public ModelAndView boardJoinAction(UserVo userVo, HttpServletRequest request) throws Exception {
+	public ModelAndView boardJoinAction(RedirectAttributes redirectAttributes, UserVo userVo, HttpServletRequest request) throws Exception {
 		request.setCharacterEncoding("utf-8");
-		System.out.println(userVo.getName());
 		
 		List<TypeVo> phoneList = new ArrayList<TypeVo>();
 		phoneList = boardService.selectTypeList("phone");
@@ -111,6 +110,11 @@ public class BoardController {
 			}
 		}
 		int result = boardService.userInsert(userVo);
+		if(result > 0) {
+			redirectAttributes.addFlashAttribute("msg_insert","삽입성공");
+		}else {
+			redirectAttributes.addFlashAttribute("msg_insert","삽입실패");
+		}
 		return new ModelAndView("redirect:/board/boardList.do?pageNo=0");
 	}	
 	@RequestMapping(value = "/board/boardList.do", method = RequestMethod.GET)
@@ -133,7 +137,6 @@ public class BoardController {
 		model.addAttribute("boardList", boardList);
 		model.addAttribute("totalCnt", boardList.size());
 		model.addAttribute("pageNo", page);
-		
 		return "board/boardList";
 	}
 	
@@ -150,7 +153,7 @@ public class BoardController {
 		model.addAttribute("boardType", boardType);
 		model.addAttribute("boardNum", boardNum);
 		model.addAttribute("board", boardVo);
-		
+
 		return "board/boardView";
 	}
 	

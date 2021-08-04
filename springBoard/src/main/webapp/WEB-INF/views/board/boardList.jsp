@@ -55,6 +55,10 @@
 </script>
 <body>
 <script>
+	if('${msg_insert}' == '삽입성공'){
+		alert('회원가입완료');
+	}
+	
 	if('${msg}' == '삭제성공') {
 		alert('${msg}');
 	}else if('${msg}' == '삭제실패'){
