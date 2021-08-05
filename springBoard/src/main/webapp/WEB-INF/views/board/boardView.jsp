@@ -14,10 +14,10 @@
 </head>
 <body>
 <script>
-	if('${msg}' == '업데이트성공') {
-		alert('${msg}');
-	}else if('${msg}' == '업데이트실패'){
-		alert('${msg}');
+	if('${msg}' == 'update_ok') {
+		alert('수정완료');
+	}else if('${msg}' == 'update_no'){
+		alert('수정실패');
 	}
 </script>
 <table align="center">
@@ -45,6 +45,7 @@
 					Writer
 					</td>
 					<td>
+					${board.creator}
 					</td>
 				</tr>
 			</table>

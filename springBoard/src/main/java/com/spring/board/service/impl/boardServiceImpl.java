@@ -89,4 +89,10 @@ public class boardServiceImpl implements boardService{
 		// TODO Auto-generated method stub
 		return boardDao.selectLogin(userVo);
 	}
+	
+	@Override
+	public UserVo selectUser(String id) throws Exception {
+		// TODO Auto-generated method stub
+		return boardDao.selectUser(id);
+	}
 }

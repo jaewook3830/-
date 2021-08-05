@@ -139,12 +139,7 @@
 				return;
 			}
 		}
-		if($j("#name").val().length > 5){
-			alert("이름이너무깁니다. 5글자이하로입력하세요.");
-			$j("#name").val("");
-			$j("#name").focus();
-			return;
-		}
+		
 		if($j("#id_button").prop('disabled')){
 			if(phonepattern.test($j("#phone2").val()) && phonepattern.test($j("#phone3").val())){
 				if($j("#postNo").val() == "" || addrpattern.test($j("#postNo").val())){

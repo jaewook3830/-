@@ -90,4 +90,10 @@ public class BoardDaoImpl implements BoardDao{
 		// TODO Auto-generated method stub
 		return sqlSession.selectOne("login", userVo);
 	}
+	
+	@Override
+	public UserVo selectUser(String id) throws Exception {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("userSelect",id);
+	}
 }

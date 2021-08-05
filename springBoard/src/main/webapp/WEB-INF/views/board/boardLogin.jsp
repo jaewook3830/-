@@ -8,6 +8,17 @@
 <title>login</title>
 <script type="text/javascript">
 	function login_ok(f) {
+	if($j("#id").val() == ""){
+		alert("아이디를 입력해주세요.");
+		$j("#id").focus();
+		return;
+	}
+	if($j("#pw").val() == ""){
+		alert("비밀번호를 입력해주세요.");
+		$j("#pw").focus();
+		return;
+	}
+	
 	$j.ajax({
 		url : "/board/boardLoginAction.do",
 		method : "post",
@@ -18,12 +29,12 @@
 			if(data["result"]=='0'){
 				if(data["result2"]=='1'){
 					alert("비밀번호가 틀렸습니다.");
+					$j("#pw").focus();
 				}else if(data["result2"]=='0'){
-					alert("존재하는 아이디가 없습니다.")
+					alert("존재하는 아이디가 없습니다. 회원가입하세요.")
 				}
 			}else if(data["result"]=='1'){
-				f.action="/board/boardList.do";
-				f.submit();
+				location.href="/board/boardList.do?pageNo=0";
 			}	
 		},
 		error : function() {

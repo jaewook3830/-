@@ -15,6 +15,18 @@
     	<result property="codeName" 	column="CODE_NAME"/>
     </resultMap>
     
+    <resultMap type="com.spring.board.vo.UserVo" id="userVo">
+    	<result property="id" 			column="USER_ID"/>
+    	<result property="pw" 			column="USER_PW"/>
+    	<result property="name" 		column="USER_NAME"/>
+    	<result property="phone1" 		column="USER_PHONE1"/>
+    	<result property="phone2" 		column="USER_PHONE2"/>
+    	<result property="phone3" 		column="USER_PHONE3"/>
+    	<result property="postNo" 		column="USER_ADDR1"/>
+    	<result property="addr2" 		column="USER_ADDR2"/>
+    	<result property="company" 		column="USER_COMPANY"/>
+    </resultMap>
+    
     <select id="boardList" parameterType="com.spring.board.vo.PageVo" resultMap="boardVo">
         SELECT 
 		  BOARD_TYPE
@@ -57,6 +69,7 @@
 			,BOARD_NUM
 			,BOARD_TITLE
 			,BOARD_COMMENT
+			,CREATOR
 		FROM
 			BOARD
     	WHERE 	BOARD_TYPE = #{boardType}
@@ -82,7 +95,7 @@
 	    WHERE BOARD_TYPE = #{boardType}), 1)
         ,#{boardTitle}
         ,#{boardComment}
-        ,'SYSTEM'
+        ,#{creator}
         ,TO_CHAR(SYSDATE)
         ,'SYSTEM'
         ,TO_CHAR(SYSDATE)
@@ -102,20 +115,56 @@
     	and BOARD_NUM = #{boardNum}
     </update>
     <select id="typeList" parameterType="String" resultMap="typeVo">
-    	SELECT CODE_TYPE, CODE_ID, CODE_NAME
+    	SELECT CODE_TYPE
+	    	, CODE_ID
+	    	, CODE_NAME
     	FROM COM_CODE
     	WHERE CODE_TYPE = #{codeType}
     </select>
     
     <select id="id_chk" parameterType="String" resultType="int">
-    	select count(*) from user_info where user_id = #{id}
+    	select count(*) 
+    	from user_info 
+    	where user_id = #{id}
     </select>
     <insert id="userInsert" parameterType="com.spring.board.vo.UserVo">
-    	insert into user_info(USER_ID, USER_PW, USER_NAME, USER_PHONE1, USER_PHONE2, USER_PHONE3,
-    							USER_ADDR1, USER_ADDR2, USER_COMPANY)
-    	values(#{id}, #{pw}, #{name}, #{phone1}, #{phone2}, #{phone3}, #{postNo}, #{addr2}, #{company})
+    	insert into user_info(USER_ID, 
+    						USER_PW, 
+    						USER_NAME, 
+    						USER_PHONE1, 
+    						USER_PHONE2, 
+    						USER_PHONE3,
+    						USER_ADDR1, 
+    						USER_ADDR2, 
+    						USER_COMPANY)
+    				values(#{id}, 
+    		  			   #{pw}, 
+    		  			   #{name}, 
+    		   			   #{phone1}, 
+    		  			   #{phone2}, 
+    		  			   #{phone3}, 
+    		  			   #{postNo}, 
+    		 			   #{addr2}, 
+    		  		  	   #{company})
     </insert>
+    
     <select id="login" parameterType="com.spring.board.vo.UserVo" resultType="int">
-    	select count(*) from user_info where USER_ID = #{id} and USER_PW = #{pw}
+    	select count(*) 
+    	from user_info 
+    	where USER_ID = #{id} and USER_PW = #{pw}
+    </select>
+    
+    <select id="userSelect" parameterType="String" resultMap="userVo">
+    	select USER_ID
+    		  ,USER_PW
+    		  ,USER_NAME
+    		  ,USER_PHONE1
+    		  ,USER_PHONE2
+    		  ,USER_PHONE3
+    		  ,USER_ADDR1
+    		  ,USER_ADDR2
+    		  ,USER_COMPANY
+    	from user_info
+    	where USER_ID = #{id}
     </select>
 </mapper>

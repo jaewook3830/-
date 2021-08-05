@@ -30,4 +30,6 @@ public interface BoardDao {
 	public int userInsert(UserVo userVo) throws Exception;
 
 	public int selectLogin(UserVo userVo) throws Exception;
+	
+	public UserVo selectUser(String id) throws Exception;
 }

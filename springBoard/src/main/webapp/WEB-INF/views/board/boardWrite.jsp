@@ -16,6 +16,7 @@
 			var param = $frm.serialize();
 			
 			var boardType = $j("#menu option:selected").val();
+			console.log(boardType);
 			$j.ajax({
 			    url : "/board/boardWriteAction.do?boardType="+boardType ,
 			    dataType: "json",
@@ -35,8 +36,31 @@
 			    }
 			});
 		});
+		
+		$j("#row").on("click", function() {
+			var tbody = "";
+			  tbody +="<tr><td width='120' align='center'>Type</td>";
+			  tbody +="<td><select id='menu' name='bType'><c:forEach items='${typeList}' var='tl'><option value='${tl.codeId }'>${tl.codeName}</option></c:forEach></select><input type='button' id='del_btn2' style='float: right;' value='青昏力' onclick='del_row(this);'></td></tr>";
+			  tbody +="<tr><td width='120' align='center'>Title</td>";
+			  tbody +="<td width='400'><input name='boardTitle' type='text' size='50' value='${board.boardTitle}'></td></tr>";
+			  tbody +="<tr><td height='300' align='center'>Comment</td>";
+			  tbody +="<td valign='top'><textarea name='boardComment'  rows='20' cols='55'>${board.boardComment}</textarea></td></tr>";
+		  $j("#tbody").append(tbody);
+		});
+		
+		$j("#del_btn").bind("click", function() {
+			var trNum = $j(this).closest('tr').prevAll().length;
+			$j("#tb tr").eq(trNum).remove();
+			$j("#tb tr").eq(trNum).remove();
+			$j("#tb tr").eq(trNum).remove();
+		});
 	});
-	
+	function del_row(f) {
+		var trNum = $j(f).closest('tr').prevAll().length;
+		$j("#tbody tr").eq(trNum).remove();
+		$j("#tbody tr").eq(trNum).remove();
+		$j("#tbody tr").eq(trNum).remove();
+	}
 
 </script>
 <body>
@@ -45,21 +69,23 @@
 		<tr>
 			<td align="right">
 			<input id="submit" type="button" value="累己">
+			<input id="row" type="button" value="青眠啊">
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<table border ="1"> 
+				<table id="tb" border ="1"> 
 					<tr>
 						<td width="120" align="center">
 						Type
 						</td>
 						<td>
-							<select id="menu">
+							<select id="menu" name="bType">
 								<c:forEach items="${typeList}" var="tl">
 									<option value="${tl.codeId }">${tl.codeName}</option>
 								</c:forEach>
 							</select>
+							<input style="float: right;" type="button" id="del_btn" value="青昏力">
 						</td>
 					</tr>
 					<tr>
@@ -78,11 +104,15 @@
 						<textarea name="boardComment"  rows="20" cols="55">${board.boardComment}</textarea>
 						</td>
 					</tr>
+					<tbody id="tbody">
+					</tbody>
 					<tr>
 						<td align="center">
 						Writer
 						</td>
 						<td>
+						${userVo.name}
+						<input type="hidden" name="creator" value="${userVo.name }">
 						</td>
 					</tr>
 				</table>

@@ -55,14 +55,14 @@
 </script>
 <body>
 <script>
-	if('${msg_insert}' == '삽입성공'){
+	if('${msg_insert}' == 'insert_ok'){
 		alert('회원가입완료');
 	}
 	
-	if('${msg}' == '삭제성공') {
-		alert('${msg}');
-	}else if('${msg}' == '삭제실패'){
-		alert('${msg}');
+	if('${msg}' == 'delete_ok') {
+		alert('삭제완료');
+	}else if('${msg}' == 'delete_no'){
+		alert('삭제실패');
 	}
 </script>
 <table  align="center">
@@ -70,6 +70,7 @@
 		<td align="right">
 			<c:choose>
 				<c:when test="${login=='ok'}">
+					${userVo.name}님 | 
 					<a href = "/board/boardLogout.do">로그아웃</a>
 				</c:when>
 				<c:otherwise>
