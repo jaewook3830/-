@@ -29,6 +29,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.spring.board.HomeController;
 import com.spring.board.service.boardService;
 import com.spring.board.vo.BoardVo;
+import com.spring.board.vo.BoardVoList;
 import com.spring.board.vo.PageVo;
 import com.spring.board.vo.TypeVo;
 import com.spring.board.vo.UserVo;
@@ -186,10 +187,11 @@ public class BoardController {
 	
 	@RequestMapping(value = "/board/boardWriteAction.do", method = RequestMethod.POST)
 	@ResponseBody
-	public String boardWriteAction(Locale locale,BoardVo boardVo, @RequestParam("boardType")String boardType, HttpServletRequest request) throws Exception{
+	public String boardWriteAction(Locale locale, BoardVoList boardVoList, HttpServletRequest request) throws Exception{
 		
 		HashMap<String, String> result = new HashMap<String, String>();
 		CommonUtil commonUtil = new CommonUtil();
+		/*
 		String[] bType = request.getParameterValues("bType");
 		String[] bTitle = request.getParameterValues("boardTitle");
 		String[] bComment = request.getParameterValues("boardComment");
@@ -201,7 +203,24 @@ public class BoardController {
 			boardVo.setBoardComment(bComment[i]);
 			resultCnt = boardService.boardInsert(boardVo);;
 		}
-		
+		*/
+		int resultCnt = 0;
+		String creator = request.getParameter("creator");
+		for(int i = 0; i < boardVoList.getBoardVoList().size(); i++) {
+			if(boardVoList.getBoardVoList().get(i).getBoardType() == null) {
+				continue;
+			}
+			BoardVo boardVo = new BoardVo();
+			boardVo.setBoardType(boardVoList.getBoardVoList().get(i).getBoardType());
+			boardVo.setBoardTitle(boardVoList.getBoardVoList().get(i).getBoardTitle());
+			boardVo.setBoardComment(boardVoList.getBoardVoList().get(i).getBoardComment());
+			boardVo.setCreator(creator);
+			resultCnt = boardService.boardInsert(boardVo);
+			if(!(resultCnt > 0)) {
+				resultCnt = 0;
+				break;
+			}
+		}
 		result.put("success", (resultCnt > 0)?"Y":"N"); 
 		String callbackMsg = commonUtil.getJsonCallBackString(" ",result);
 		

@@ -8,17 +8,14 @@
 <title>boardWrite</title>
 </head>
 <script type="text/javascript">
-
 	$j(document).ready(function(){
 		
 		$j("#submit").on("click",function(){
 			var $frm = $j('.boardWrite :input');
 			var param = $frm.serialize();
 			
-			var boardType = $j("#menu option:selected").val();
-			console.log(boardType);
 			$j.ajax({
-			    url : "/board/boardWriteAction.do?boardType="+boardType ,
+			    url : "/board/boardWriteAction.do",
 			    dataType: "json",
 			    type: "POST",
 			    data : param,
@@ -36,15 +33,16 @@
 			    }
 			});
 		});
-		
+		var i = 0;
 		$j("#row").on("click", function() {
+			i = i + 1;
 			var tbody = "";
 			  tbody +="<tr><td width='120' align='center'>Type</td>";
-			  tbody +="<td><select id='menu' name='bType'><c:forEach items='${typeList}' var='tl'><option value='${tl.codeId }'>${tl.codeName}</option></c:forEach></select><input type='button' id='del_btn2' style='float: right;' value='青昏力' onclick='del_row(this);'></td></tr>";
+			  tbody +="<td><select id='menu' name='boardVoList["+i+"].boardType'><c:forEach items='${typeList}' var='tl'><option value='${tl.codeId }'>${tl.codeName}</option></c:forEach></select><input type='button' id='del_btn2' style='float: right;' value='青昏力' onclick='del_row(this);'></td></tr>";
 			  tbody +="<tr><td width='120' align='center'>Title</td>";
-			  tbody +="<td width='400'><input name='boardTitle' type='text' size='50' value='${board.boardTitle}'></td></tr>";
+			  tbody +="<td width='400'><input name='boardVoList["+i+"].boardTitle' type='text' size='50' value='${board.boardTitle}'></td></tr>";
 			  tbody +="<tr><td height='300' align='center'>Comment</td>";
-			  tbody +="<td valign='top'><textarea name='boardComment'  rows='20' cols='55'>${board.boardComment}</textarea></td></tr>";
+			  tbody +="<td valign='top'><textarea name='boardVoList["+i+"].boardComment'  rows='20' cols='55'>${board.boardComment}</textarea></td></tr>";
 		  $j("#tbody").append(tbody);
 		});
 		
@@ -61,7 +59,6 @@
 		$j("#tbody tr").eq(trNum).remove();
 		$j("#tbody tr").eq(trNum).remove();
 	}
-
 </script>
 <body>
 <form class="boardWrite">
@@ -80,7 +77,7 @@
 						Type
 						</td>
 						<td>
-							<select id="menu" name="bType">
+							<select id="menu" name="boardVoList[0].boardType">
 								<c:forEach items="${typeList}" var="tl">
 									<option value="${tl.codeId }">${tl.codeName}</option>
 								</c:forEach>
@@ -93,7 +90,7 @@
 						Title
 						</td>
 						<td width="400">
-						<input name="boardTitle" type="text" size="50" value="${board.boardTitle}"> 
+						<input name="boardVoList[0].boardTitle" type="text" size="50" value="${board.boardTitle}"> 
 						</td>
 					</tr>
 					<tr>
@@ -101,7 +98,7 @@
 						Comment
 						</td>
 						<td valign="top">
-						<textarea name="boardComment"  rows="20" cols="55">${board.boardComment}</textarea>
+						<textarea name="boardVoList[0].boardComment"  rows="20" cols="55">${board.boardComment}</textarea>
 						</td>
 					</tr>
 					<tbody id="tbody">

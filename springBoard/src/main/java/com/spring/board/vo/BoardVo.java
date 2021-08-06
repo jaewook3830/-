@@ -1,5 +1,7 @@
 package com.spring.board.vo;
 
+import java.util.List;
+
 public class BoardVo {
 	
 	private String 	boardType;
@@ -9,7 +11,6 @@ public class BoardVo {
 	private String 	creator;
 	private String	modifier;
 	private int totalCnt;
-	
 	
 	public int getTotalCnt() {
 		return totalCnt;
